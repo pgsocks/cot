@@ -1,3 +1,9 @@
+# Expat uses NoConfig for an empty single-configuration build type. Keep the
+# parent install configuration consistent so its exported locations install.
+if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE NoConfig CACHE STRING "Build type" FORCE)
+endif()
+
 include("${PROJECT_SOURCE_DIR}/cmake/CPM.cmake")
 CPMAddPackage(
 	NAME Expat
@@ -5,7 +11,6 @@ CPMAddPackage(
 	# Expat 2.9.0 release commit.
 	GIT_TAG a76b1174c1ea52abb639a4c69d52b630a8a106a2
 	SOURCE_SUBDIR expat
-	EXCLUDE_FROM_ALL YES
 	OPTIONS
 		"EXPAT_BUILD_TOOLS OFF"
 		"EXPAT_BUILD_EXAMPLES OFF"
@@ -13,7 +18,7 @@ CPMAddPackage(
 		"EXPAT_BUILD_DOCS OFF"
 		"EXPAT_BUILD_PKGCONFIG OFF"
 		"EXPAT_SHARED_LIBS OFF"
-		"EXPAT_ENABLE_INSTALL OFF"
+		"EXPAT_ENABLE_INSTALL ON"
 )
 
 # Expat's getenv calls enable process-wide diagnostic output. Keep its private

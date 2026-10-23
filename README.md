@@ -76,6 +76,37 @@ selections, and troubleshooting. Put local toolchain or cache overrides in
 the ignored `CMakeUserPresets.json`, inheriting from shared presets and using
 separate build directories.
 
+## Install and consume
+
+Build and install the library, public headers, CMake package, enabled CLI, and
+its pinned static Expat dependency:
+
+```sh
+cmake --preset no-tests
+cmake --build --preset no-tests
+cmake --install build/no-tests
+```
+
+The shared prefix is `$HOME/.local`; `cmake --install build/no-tests --prefix
+/path/to/prefix` overrides it. The installed tree may be moved together. Set
+`CMAKE_PREFIX_PATH` to its current prefix when configuring a consumer:
+
+```cmake
+cmake_minimum_required(VERSION 3.24)
+project(example LANGUAGES C CXX)
+find_package(cot REQUIRED CONFIG)
+add_executable(example main.c)
+set_property(TARGET example PROPERTY C_STANDARD 11)
+target_link_libraries(example PRIVATE cot::cot)
+```
+
+C11 source consumers enable C++ as a project language so CMake selects the
+C++ linker and its runtime for the C++17 library implementation. C++17 consumers
+may use `LANGUAGES CXX` and a `.cpp` source. The package locates Expat and links
+its separate installed archive transitively. CPM source builds and the
+`cot::cot` target remain available. Test dependencies are excluded from
+installation.
+
 ## Pinned schemas
 
 Ordinary builds do not download ATAK. To verify the pinned official
